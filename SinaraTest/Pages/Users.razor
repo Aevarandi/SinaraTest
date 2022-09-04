@@ -1,0 +1,61 @@
+﻿@page "/users"
+@using SinaraTest.Data
+
+<PageTitle>Users</PageTitle>
+
+<h1>Пользователи</h1>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Фамилия</th>
+        <th>Имя</th>
+        <th>Отчество</th>
+        <th>Логин</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var user in users)
+    {
+        <tr>
+            <td>@user.Surname</td>
+            <td>@user.Name</td>
+            <td>@user.Patronymic</td>
+            <td>@user.Username</td>
+            <button class="btn btn-outline-dark" @onclick="() => EditUser(user.Id)">Редактировать пользователя</button>
+            <button class="btn btn-outline-danger" @onclick="() => DeleteUser(user.Id)">Удалить пользователя</button>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<button class="btn btn-primary" @onclick="AddUser">Добавить пользователя</button>
+
+@inject UserService UserService;
+@inject NavigationManager NavigationManager;
+
+@code {
+    private User[] users;
+
+    protected override void OnInitialized()
+    {
+        users = UserService.GetUsers();
+    }
+
+    private void AddUser()
+    {
+        NavigationManager.NavigateTo("/user/add");
+    }
+
+    private void EditUser(long id)
+    {
+        NavigationManager.NavigateTo($"/user/edit/{id}");
+    }
+
+    private void DeleteUser(long id)
+    {
+        UserService.DeleteUser(id);
+        users = UserService.GetUsers();
+    }
+
+}

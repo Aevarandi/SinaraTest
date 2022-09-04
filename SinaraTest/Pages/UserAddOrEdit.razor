@@ -1,0 +1,82 @@
+﻿@page "/user/add"
+@page "/user/edit/{userId:long}"
+@using SinaraTest.Data
+
+<PageTitle>Users</PageTitle>
+<h1>Пользователь</h1>
+<hr/>
+<EditForm Model="@user" OnValidSubmit="SaveUser">
+    <DataAnnotationsValidator />
+    <div class="mb-3">
+        <label for="Name" class="form-label">Имя</label>
+        <div class="col-md-4">
+            <InputText class="form-control" @bind-Value="user.Name"/>
+        </div>
+        <ValidationMessage For="@(() => user.Name)"/>
+    </div>
+    
+    <div class="mb-3">
+        <label for="Surname" class="form-label">Фамилия</label>
+        <div class="col-md-4">
+            <InputText class="form-control" @bind-Value="user.Surname"/>
+        </div>
+        <ValidationMessage For="@(() => user.Surname)"/>
+    </div>
+    
+    <div class="mb-3">
+        <label for="Patronymic" class="form-label">Отчество</label>
+        <div class="col-md-4">
+            <InputText class="form-control" @bind-Value="user.Patronymic"/>
+        </div>
+        <ValidationMessage For="@(() => user.Patronymic)"/>
+    </div>
+    <div class="mb-3">
+        <label for="Username" class="form-label">Имя пользователя</label>
+        <div class="col-md-4">
+            <InputText class="form-control" @bind-Value="user.Username"/>
+        </div>
+        <ValidationMessage For="@(() => user.Username)"/>
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <button class="btn btn-light" @onclick="Cancel">Отмена</button>
+    </div>
+</EditForm>
+
+@inject UserService UserService;
+@inject NavigationManager NavigationManager; 
+@inject IActiveDirectoryService ActiveDirectoryService;
+
+@code {
+    [Parameter]
+    public long UserId { get; set; }
+    private User user = new();
+
+    protected override void OnParametersSet()
+    {
+        if (UserId != 0)
+        {
+            user =  UserService.GetUserById(UserId);
+        }
+    }
+    
+    private void SaveUser()
+    {
+        if (ActiveDirectoryService.IsUserExist(user.Username))
+        {
+            UserService.SaveUser(user);
+            NavigationManager.NavigateTo("/users"); 
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/userNotInAD");    
+        }
+       
+    }
+
+    private void Cancel()
+    {
+        NavigationManager.NavigateTo("/users");
+    }
+
+}

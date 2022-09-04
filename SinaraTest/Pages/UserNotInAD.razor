@@ -1,0 +1,11 @@
+﻿@page "/userNotInAD"
+<h3>Можно заводить пользователей только в домене Sinara</h3>
+<button class="btn btn-light" @onclick="ReturnToUsersList">Вернуться к списку пользователей</button>
+
+@inject NavigationManager  NavigationManager;
+@code {
+    private void ReturnToUsersList()
+    {
+        NavigationManager.NavigateTo("/users");
+    }
+}
